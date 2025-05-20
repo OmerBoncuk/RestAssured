@@ -29,25 +29,25 @@ public class GoRestUsersTests {
 
     public String getRandomEmail() { return RandomStringUtils.randomAlphabetic(8).toLowerCase()+"@gmail.com"; }
 
-    @Test(enabled = false)
+    @Test(enabled = false) // It is stated that the method is temporarily disabled
     public void createUserObject()
     {
-        // başlangıç işlemleri
-        // token aldım
-        // users JSON ı hazırladım.
+        // start operations
+        // got tokens
+        // users I prepared the JSON.
         int userID=
                 given()
-                        .header("Authorization", "Bearer dbe788af1336349e6a1032d893488639cdaa8eaceb524c8b9f4b716e2364f5dd")
+                        .header("Authorization", "Bearer dbe788af1336349e6a1032d893488639cdaa8eaceb524c8b9f4b716e2364f5dd") // It uses a token-based authentication mechanism to authenticate the user.
                         .contentType(ContentType.JSON)
                         .body("{\"name\":\""+getRandomName()+"\", \"gender\":\"male\", \"email\":\""+getRandomEmail()+"\", \"status\":\"active\"}")
-                        // üst taraf request özellikleridir : hazırlık işlemleri POSTMAN deki Authorization ve request BODY kısmı
+                        // The upper part is the request properties: preparation operations Authorization and request BODY part in POSTMAN
                         .log().uri()
                         .log().body()
-                        .when() // request in olduğu nokta    POSTMAN deki SEND butonu
-                        .post("") //baseURI+paratez içi(http yoksa) respons un oluştuğu nokta
-                        // CREATE işlemi POST metodu ile çağırıyoruz POSTMAN deki gibi
+                        .when() // The point where request is SEND button in POSTMAN
+                        .post("") // base URL+parentheses (if there is no http) the point where the response occurs
+                        // We call the CREATE operation with the POST method, as in POSTMAN
 
-                        // alt taraf response sonrası  POSTMAN deki test penceresi
+                        // Test window in POSTMAN after bottom side response
                         .then()
                         .log().body()
                         .statusCode(201)
@@ -115,10 +115,14 @@ public class GoRestUsersTests {
         ;
         System.out.println("userID = " + userID);
 
-        // path : class veya tip dönüşümüne imkan veremeyen direk veriyi verir. List<String> gibi
-        // jsonPath : class dönüşümüne ve tip dönüşümüne izin vererek , veriyi istediğimiz formatta verir.
+        // path : Returns direct data that does not allow class or type conversion. like List<String>
+        // jsonPath : Allows class conversion and type conversion, giving the data in the format we want.
     }
 
+    // dependsOnMethod is a feature used in the TestNG testing framework.
+    // This feature ensures that one test runs before another test runs.
+    // Thus, if a test fails, dependent tests are automatically skipped.
+    // priority is a property used in TestNG tests to set the running priority of tests.
     @Test(dependsOnMethods = "createUserObject3WithObject", priority = 1)
     public void getUserByID()
     {
@@ -144,7 +148,7 @@ public class GoRestUsersTests {
         // newUser.setName("ismet temur");
 
         Map<String,String> updateUser=new HashMap<>();
-        updateUser.put("name", "ismet temur");
+        updateUser.put("name", "Omer Boncuk");
 
         given()
                 .header("Authorization", "Bearer dbe788af1336349e6a1032d893488639cdaa8eaceb524c8b9f4b716e2364f5dd")
@@ -162,7 +166,7 @@ public class GoRestUsersTests {
                 .statusCode(200)
                 .contentType(ContentType.JSON)
                 .body("id",equalTo(userID))
-                .body("name",equalTo("ismet temur"))
+                .body("name",equalTo("Omer Boncuk"))
         ;
     }
 
@@ -243,20 +247,20 @@ public class GoRestUsersTests {
                         .log().body()
                         .statusCode(200)
                         .extract().response();
-                // body.as(), extract.as // tum gelen response uygun nesneler icin tum classlarin yapilmasi gerekiyor
+                // body.as(), extract.as // All classes need to be made for all incoming response appropriate objects
 
                 List<User>dataUser=body.jsonPath().getList("data", User.class);
-                // JSONPATH bir response icindeki bir parcayi nesneye donusturebiliriz
+                // JSONPATH We can convert a fragment in a response to an object
                 System.out.println("dataUser = " + dataUser);
 
-        // Daha önceki örneklerde (as) Clas dönüşümleri için tüm yapıya karşılık gelen
-        // gereken tüm classları yazarak dönüştürüp istediğimiz elemanlara ulaşıyorduk.
-        // Burada ise(JsonPath) aradaki bir veriyi clasa dönüştürerek bir list olarak almamıza
-        // imkan veren JSONPATH i kullandık.Böylece tek class ise veri alınmış oldu
-        // diğer class lara gerek kalmadan
+        // Corresponding to the whole structure for (as) Class transformations in the previous examples
+        // We were transforming by writing all the necessary classes and reaching the elements we wanted.
+        // Here (JsonPath) allows us to convert an intermediate data into a clas and take it as a list.
+        // We used the JSONPATH that allows. Thus, if it is a single class, the data is taken.
+        // without the need for other classes
 
-        // path : class veya tip dönüşümüne imkan veremeyen direk veriyi verir. List<String> gibi
-        // jsonPath : class dönüşümüne ve tip dönüşümüne izin vererek , veriyi istediğimiz formatta verir.
+        // path : Returns direct data that does not allow class or type conversion. like List<String>
+        // jsonPath : Allows class conversion and type conversion, giving the data in the format we want.
     }
 }
 
